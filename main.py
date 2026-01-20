@@ -76,8 +76,8 @@ def main():
         # Get submission
         submission = assignment.get_submission(user.id)
 
-        if not submission.body:
-            print(f"  WARNING: No submission found")
+        if not submission.body or len(submission.body) == 0:
+            print(f"Skipping empty submission")
             continue
 
         student_answer = submission.body
