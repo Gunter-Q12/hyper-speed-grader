@@ -1,4 +1,6 @@
 import os
+import json
+from typing import Dict, Any
 from openai import OpenAI
 
 
@@ -6,7 +8,7 @@ from openai import OpenAI
 def ask_model(
     task: str,
     model_answer: str,
-    student_answer: str):
+    student_answer: str) -> Dict[str, Any]:
 
     client = OpenAI(
         api_key=os.environ.get("OPENAI_API_KEY"),
@@ -48,7 +50,18 @@ def ask_model(
             ch = usage.prompt_tokens_details.cached_tokens
             print(f"Cache ratio: {ch * 100 / pt:.2f}")
 
-    return response.choices[0].message.content
+    # Parse the model response (SDK might return dict or JSON string).
+    content = response.choices[0].message.content
+    if content is None:
+        raise Exception("Model returned nothing")
+
+    data = json.loads(content)
+
+    # Minimal validation and conversion; allow exceptions to propagate if keys are missing or types are wrong
+    grade = float(data["grade"])  # may raise KeyError/ValueError
+    comment = str(data.get("comment", ""))
+
+    return {"grade": grade, "comment": comment}
 
 
 if __name__ == "__main__":
