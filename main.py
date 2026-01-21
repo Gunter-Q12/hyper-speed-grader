@@ -93,16 +93,34 @@ def main():
         print(f"  Grade: {grade}")
         print(f"  Comment: {comment if comment else '(no comment)'}")
 
+        # If model provided a comment, require an interactive confirmation/override
+        if comment:
+            # Prompt for grade override (press Enter to accept current)
+            while True:
+                g_in = input(f"  Enter grade (press Enter to accept current {grade}): ").strip()
+                if g_in == "":
+                    break
+                try:
+                    grade = float(g_in)
+                    break
+                except ValueError:
+                    print("  Invalid grade, please enter a numeric value or press Enter to keep current.")
+
+            # Prompt for comment override (press Enter to accept current)
+            c_in = input("  Enter comment (press Enter to accept current comment): ").strip()
+            if c_in != "":
+                comment = c_in
+
         # Update submission in Canvas
         print(f"  Updating Canvas...")
-        submission.edit(
-            submission={
-                'posted_grade': grade
-            },
-            comment={
-                'text_comment': comment
-            } if comment else None
-        )
+        # submission.edit(
+        #     submission={
+        #         'posted_grade': grade
+        #     },
+        #     comment={
+        #         'text_comment': comment
+        #     } if comment else None
+        # )
         print(f"  ✓ Updated successfully")
 
     print(f"\n{'='*60}")
