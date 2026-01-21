@@ -51,5 +51,8 @@ export CANVAS_API_URL=https://canvas.instructure.com
 ```sh
 source .env
 python3 ./main.py -h  # Run help for avaialble options
-python3 ./main.py --prompt configs/prompt.txt --task configs/task.txt --task-num 2 --students configs/students.csv --confirmation full --dry-run
+python3 ./main.py --prompt configs/prompt.txt \
+    --task configs/task.txt --task-num 2 \
+    --students configs/students.csv \
+    --confirmation full --dry-run
 ```
