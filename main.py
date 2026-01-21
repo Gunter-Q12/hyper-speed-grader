@@ -127,7 +127,7 @@ def apply_update(submission, grade, comment, dry_run: bool) -> None:
     print(f"  ✓ Updated successfully")
 
 
-def process_student(user, assignment, prompt_text: str, task_text: str, dry_run: bool = False, confirmation_mode: str = "full") -> None:
+def process_student(course, user, assignment, prompt_text: str, task_text: str, dry_run: bool = False, confirmation_mode: str = "full") -> None:
     display_name = getattr(user, "name", str(user))
     print(f"\n{'='*60}")
     print(f"Processing: {display_name}")
@@ -202,7 +202,15 @@ def process_student(user, assignment, prompt_text: str, task_text: str, dry_run:
             apply_update(submission, grade, comment, dry_run)
             return
         elif choice == "m":
-            print("Manual review link: https://stub.com")
+            # Build SpeedGrader URL using available IDs
+            course_id = getattr(assignment, "course_id", None) or getattr(course, "id", None) or getattr(course, "course_id", None)
+            assignment_id = getattr(assignment, "id", None)
+            student_id = getattr(user, "id", None)
+            if course_id and assignment_id and student_id:
+                url = f"https://canvas.instructure.com/courses/{course_id}/gradebook/speed_grader?assignment_id={assignment_id}&student_id={student_id}"
+            else:
+                url = "https://stub.com"
+            print(f"Manual review link: {url}")
             cont = input("Continue (Y/n)? ").strip().lower()
             if cont == "" or cont == "y":
                 # Do not update from script; assume manual grading will happen externally
@@ -225,7 +233,7 @@ def main():
     students_to_process = build_students_to_process(course, args)
 
     for user in students_to_process:
-        process_student(user, assignment, prompt_text, task_text, dry_run=args.dry_run, confirmation_mode=args.confirmation)
+        process_student(course, user, assignment, prompt_text, task_text, dry_run=args.dry_run, confirmation_mode=args.confirmation)
 
     print(f"\n{'='*60}")
     print("Assessment complete!")
