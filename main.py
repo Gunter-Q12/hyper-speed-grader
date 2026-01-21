@@ -89,14 +89,14 @@ def choose_assignment(course, task_num: int):
     return assignment
 
 
-def build_students_to_process(course, args: argparse.Namespace) -> List[Any]:
+def build_students_to_process(course, students_path=None) -> List[Any]:
     # Prepare list of students to process
     all_users = list(course.get_users())
     user_map = {user.name: user for user in all_users}
 
-    if args.students:
-        requested_students = load_students_from_csv(args.students)
-        print(f"Loaded {len(requested_students)} students from {args.students}")
+    if students_path:
+        requested_students = load_students_from_csv(students_path)
+        print(f"Loaded {len(requested_students)} students from {students_path}")
 
         # Map requested names to user objects, warn if not found
         students_to_process: List[Any] = []
@@ -206,10 +206,7 @@ def process_student(course, user, assignment, prompt_text: str, task_text: str, 
             course_id = getattr(assignment, "course_id", None) or getattr(course, "id", None) or getattr(course, "course_id", None)
             assignment_id = getattr(assignment, "id", None)
             student_id = getattr(user, "id", None)
-            if course_id and assignment_id and student_id:
-                url = f"https://canvas.instructure.com/courses/{course_id}/gradebook/speed_grader?assignment_id={assignment_id}&student_id={student_id}"
-            else:
-                url = "https://stub.com"
+            url = f"https://canvas.instructure.com/courses/{course_id}/gradebook/speed_grader?assignment_id={assignment_id}&student_id={student_id}"
             print(f"Manual review link: {url}")
             cont = input("Continue (Y/n)? ").strip().lower()
             if cont == "" or cont == "y":
@@ -230,7 +227,7 @@ def main():
 
     course = init()
     assignment = choose_assignment(course, args.task_num)
-    students_to_process = build_students_to_process(course, args)
+    students_to_process = build_students_to_process(course, args.students)
 
     for user in students_to_process:
         process_student(course, user, assignment, prompt_text, task_text, dry_run=args.dry_run, confirmation_mode=args.confirmation)
