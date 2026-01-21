@@ -17,11 +17,13 @@ Features:
 ## Usage
 0. Clone project
 ```sh
-git clone
+git clone https://github.com/Gunter-Q12/hyper-speed-grader.git
 cd hyper-speed-grader
 ```
 1. Install requirements
 ```
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 2. Create `.env` file with secrets
