@@ -2,16 +2,18 @@
 AI-assisted grading CLI for any Canvas course.
 
 Overview:
-* You specify how grading criteria for a task (see [Usage](#Usage))
+* You specify how grading criteria for a task and which task we are grading (see [Usage](#Usage))
+* You optionally specify a list of students to grade
 * Script gets student answers from Canvas using API
 * Then for each student does the following:
-	* Sends [prompt](./configs/promt.txt), [grading criteria](./configs/task.txt) and student answer to OpenAI compatible model
+	* Sends [prompt](./configs/prompt.txt), [grading criteria](./configs/task.txt) and student answer to OpenAI compatible model
 	* Gets grade and a comment
 	* Prompts you to accept/edit/skip result
 
 Features:
-* You can specify a set of students to grade
+* Skips already graded and empty answers
 * Can work in "full-auto" mode without prompting user ever
+
 ## Usage
 0. Clone project
 ```sh
@@ -40,9 +42,9 @@ export CANVAS_COURSE_ID=13080964  # This is "НИС РС" course ID
 export CANVAS_API_URL=https://canvas.instructure.com
 ```
 3. Edit configs
-	1. Provide task and how answer should be graded in file [./configs/task](./configs/task). Check current contents for an example.
-	2. (Optional) If you want to grade only some subset of users, edit [./configs/students.csv](./configs/students.csv). You can copy student names from Canvas site or run `python3 ./users.py`.
-	3. (Optional) To tweak prompt edit [./configs/prompt.txt](prompt.txt)
+	1. Provide task and how answer should be graded in file [./configs/task.txt](./configs/task.txt). Check current contents for an example
+	2. (Optional) If you want to grade only some subset of users, edit [./configs/students.csv](./configs/students.csv). You can copy student names from Canvas site or run `python3 ./users.py`
+	3. (Optional) To tweak prompt edit [./configs/prompt.txt](./configs/prompt.txt)
 4. Source `.env` file and run HyperSpeedGrader:
 ```sh
 source .env
